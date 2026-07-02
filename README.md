@@ -31,12 +31,23 @@ python3 -m http.server 4173
 # open http://localhost:4173
 ```
 
-On iPhone: open the URL in Safari → Share → **Add to Home Screen**. It installs as a
-standalone app and works offline. All data lives in localStorage on the device —
-use **Vision → Export backup** periodically.
+## Getting it on your iPhone (one-time, ~5 minutes)
 
-To put it on the phone permanently, deploy the folder to any static host
-(GitHub Pages, Vercel, Netlify — no build step needed).
+The offline magic (service worker) only activates on **https** or localhost, so the
+right move is free static hosting — then the app lives on your phone permanently,
+works offline, and never needs your Mac again:
+
+1. Push this repo to GitHub (private is fine):
+   `git remote add origin <your-repo-url> && git push -u origin main`
+2. On GitHub: **Settings → Pages → Source: main branch, / (root)** → Save.
+3. Open the Pages URL in Safari on your phone → Share → **Add to Home Screen**.
+
+It installs as a standalone app with the Telos icon. After the first load it works
+fully offline. All data lives in localStorage **on the device** — nothing is sent
+anywhere. Use **More → Data → Export backup** every few weeks.
+
+(Serving over local Wi-Fi from your Mac also works for trying it out, but iOS won't
+cache it offline over plain http — use Pages for the permanent install.)
 
 ## Views
 
