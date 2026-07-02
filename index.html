@@ -65,21 +65,31 @@
   <!-- ============ BREAK GLASS ============ -->
   <section id="view-break" class="view hidden">
     <div id="bg-step-1" class="bg-step">
+      <p class="bg-eyebrow">The wave is here</p>
       <h1 class="bg-title">Name it.</h1>
       <p class="bg-text">A dopamine wave — and if a slip already happened, the pull to keep going is the <strong>what-the-hell effect</strong>. A known glitch, not the truth about you.</p>
-      <p class="bg-text">Waves crest and pass in about 15 minutes. Outlast one peak.</p>
-      <button class="primary-btn" onclick="bgStep(2)">Next</button>
+      <p class="bg-text">Waves crest and pass in about 15 minutes. You only have to outlast one peak.</p>
+      <button class="primary-btn" onclick="bgStep(2)">I'm listening</button>
+      <button class="quiet-link" onclick="showView('today')">False alarm — take me back</button>
     </div>
 
     <div id="bg-step-2" class="bg-step hidden">
+      <p class="bg-eyebrow">Written when you were strong</p>
       <h1 class="bg-title">From calm Charlie.</h1>
       <div class="letter" id="bg-letter"></div>
       <button class="primary-btn" onclick="bgStep(3)">Start the 15 minutes</button>
     </div>
 
     <div id="bg-step-3" class="bg-step hidden">
-      <h1 class="bg-timer" id="bg-timer">15:00</h1>
-      <p class="bg-text">Pick one escape and go. The timer keeps running.</p>
+      <div class="breath-stage">
+        <svg class="ring" viewBox="0 0 220 220" aria-hidden="true">
+          <circle class="ring-track" cx="110" cy="110" r="100"/>
+          <circle class="ring-fill" id="ring-fill" cx="110" cy="110" r="100"/>
+        </svg>
+        <div class="breath-core" aria-hidden="true"></div>
+        <div class="bg-timer" id="bg-timer">15:00</div>
+      </div>
+      <p class="breath-label" id="breath-label">Breathe in</p>
       <ul class="escape-list">
         <li>16 oz of water, right now</li>
         <li>10-minute walk out the front door</li>
@@ -87,18 +97,21 @@
         <li>Pray it out loud — He already knows</li>
       </ul>
       <button class="primary-btn" onclick="urgeOutcome('surfed')">I outlasted it</button>
-      <button class="ghost-btn" onclick="urgeOutcome('slipped')">The slip happened</button>
+      <button class="quiet-link" onclick="urgeOutcome('slipped')">The slip happened</button>
     </div>
 
     <div id="bg-surfed" class="bg-step hidden">
+      <div class="halo" aria-hidden="true"></div>
+      <p class="bg-eyebrow">Point on the board</p>
       <h1 class="bg-title accent">Urge defeated.</h1>
-      <p class="bg-text">Logged forever — <strong id="bg-urge-count"></strong> on the board. Every craving is a scoring opportunity now.</p>
+      <p class="bg-text">Logged forever — <strong id="bg-urge-count"></strong>. Every craving is a scoring opportunity now.</p>
       <button class="primary-btn" onclick="showView('today')">Back to today</button>
     </div>
 
     <div id="bg-slipped" class="bg-step hidden">
+      <p class="bg-eyebrow">Rom 8:1 — no condemnation</p>
       <h1 class="bg-title">One thing is one thing.</h1>
-      <p class="bg-text">It doesn't have to become the next thing. That happened, it's human, and it is not a verdict on you. <em>"There is therefore now no condemnation…"</em> — Rom 8:1</p>
+      <p class="bg-text">It doesn't have to become the next thing. That happened, it's human, and it is not a verdict on you.</p>
       <p class="bg-text">The next choice is neutral. The workout still happens. The kitchen still closes. Nothing else falls with it.</p>
       <p class="bg-text">You showed up to this screen mid-slip — that's the recovery muscle, and it counts.</p>
       <button class="primary-btn" onclick="showView('today')">Next choice</button>

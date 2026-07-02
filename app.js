@@ -192,6 +192,9 @@ function renderSlipSeg() {
 /* ---------- break glass ---------- */
 
 let bgInterval = null;
+let breathInterval = null;
+
+const RING_CIRCUMFERENCE = 628.3; // 2 * PI * r(100)
 
 function startBreakGlass() {
   showView("break");
@@ -207,21 +210,48 @@ function bgStep(n) {
 }
 
 function startTimer(secs) {
-  clearInterval(bgInterval);
+  stopBreakTimers();
   const el = document.getElementById("bg-timer");
+  const ring = document.getElementById("ring-fill");
+  const label = document.getElementById("breath-label");
   const end = Date.now() + secs * 1000;
+
+  ring.style.strokeDashoffset = 0;
   const tick = () => {
     const left = Math.max(0, Math.round((end - Date.now()) / 1000));
     const m = Math.floor(left / 60), s = left % 60;
-    el.textContent = left > 0 ? `${m}:${String(s).padStart(2, "0")}` : "Wave passed.";
-    if (left <= 0) clearInterval(bgInterval);
+    el.textContent = `${m}:${String(s).padStart(2, "0")}`;
+    ring.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - left / secs);
+    if (left <= 0) {
+      stopBreakTimers();
+      el.textContent = "0:00";
+      label.textContent = "The wave passed. You outlasted it.";
+    }
   };
   tick();
   bgInterval = setInterval(tick, 1000);
+
+  // Breath guide: 4s in, 4s out — matches the core's 8s CSS cycle, which
+  // (re)starts from "small" the moment the step becomes visible.
+  let breathIn = true;
+  label.textContent = "Breathe in";
+  breathInterval = setInterval(() => {
+    breathIn = !breathIn;
+    label.style.opacity = 0;
+    setTimeout(() => {
+      label.textContent = breathIn ? "Breathe in" : "Breathe out";
+      label.style.opacity = 1;
+    }, 450);
+  }, 4000);
+}
+
+function stopBreakTimers() {
+  clearInterval(bgInterval);
+  clearInterval(breathInterval);
 }
 
 function urgeOutcome(outcome) {
-  clearInterval(bgInterval);
+  stopBreakTimers();
   S.urges.push({ ts: Date.now(), outcome });
   save();
   document.querySelectorAll(".bg-step").forEach(s => s.classList.add("hidden"));
@@ -493,11 +523,15 @@ function importData(ev) {
 /* ---------- navigation ---------- */
 
 function showView(name) {
+  if (name !== "break") stopBreakTimers();
+  document.body.classList.toggle("in-break", name === "break");
   document.querySelectorAll(".view").forEach(v => v.classList.add("hidden"));
   document.getElementById("view-" + name).classList.remove("hidden");
   document.querySelectorAll("#tabbar button").forEach(b =>
     b.classList.toggle("active", b.dataset.view === name));
   document.getElementById("break-glass-fab").style.display =
+    name === "break" ? "none" : "";
+  document.getElementById("tabbar").style.display =
     name === "break" ? "none" : "";
   if (name === "today") initToday();
   if (name === "stats") initStats();

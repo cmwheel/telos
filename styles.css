@@ -209,28 +209,71 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent-deep); }
   padding: 13px 30px;
   font-size: 0.95rem;
   cursor: pointer;
-  box-shadow: 0 6px 24px oklch(0 0 0 / 0.45);
   z-index: 40;
   -webkit-tap-highlight-color: transparent;
+  animation: fab-breathe 3.4s ease-in-out infinite;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#break-glass-fab:active { transform: translateX(-50%) scale(0.94); }
+
+@keyframes fab-breathe {
+  0%, 100% {
+    box-shadow: 0 6px 24px oklch(0 0 0 / 0.45), 0 0 0 0 oklch(0.62 0.11 35 / 0.45);
+  }
+  50% {
+    box-shadow: 0 6px 24px oklch(0 0 0 / 0.45), 0 0 0 14px oklch(0.62 0.11 35 / 0);
+  }
 }
 
-.bg-step { padding-top: 9vh; }
+/* deeper room when inside the flow */
+body.in-break { background: oklch(0.16 0.014 55); }
+body { transition: background 0.8s ease; }
+
+.bg-step { padding-top: 8vh; }
+
+/* staggered reveal — replays each time a step is shown */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.bg-step > * { animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.bg-step > *:nth-child(1) { animation-delay: 0.05s; }
+.bg-step > *:nth-child(2) { animation-delay: 0.18s; }
+.bg-step > *:nth-child(3) { animation-delay: 0.34s; }
+.bg-step > *:nth-child(4) { animation-delay: 0.5s; }
+.bg-step > *:nth-child(5) { animation-delay: 0.68s; }
+.bg-step > *:nth-child(6) { animation-delay: 0.86s; }
+
+.bg-eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-bottom: var(--space-sm);
+}
 .bg-title {
   font-family: var(--serif);
-  font-size: 2.1rem;
+  font-size: 2.2rem;
   font-weight: 400;
+  line-height: 1.15;
   margin-bottom: var(--space-lg);
 }
 .bg-title.accent { color: var(--accent); }
-.bg-timer {
-  font-family: var(--serif);
-  font-size: 4rem;
-  font-weight: 400;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-  margin-bottom: var(--space-md);
+.bg-text { margin-bottom: var(--space-md); color: var(--ink); }
+
+.quiet-link {
+  display: block; width: 100%;
+  background: none; border: none;
+  color: var(--ink-soft);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  padding: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  -webkit-tap-highlight-color: transparent;
 }
-.bg-text { margin-bottom: var(--space-md); }
+
 .letter {
   background: var(--bg-raised);
   border-radius: 14px;
@@ -240,8 +283,85 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent-deep); }
   line-height: 1.7;
   margin-bottom: var(--space-md);
 }
-.escape-list { margin: 0 0 var(--space-lg) 22px; }
+
+/* --- the breathing timer stage --- */
+
+.breath-stage {
+  position: relative;
+  width: min(64vw, 250px);
+  aspect-ratio: 1;
+  margin: 0 auto var(--space-sm);
+  display: grid;
+  place-items: center;
+}
+.ring {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.ring-track {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 3;
+}
+.ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 628.3;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+}
+.breath-core {
+  position: absolute;
+  width: 58%; height: 58%;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.34 0.05 78 / 0.65), oklch(0.34 0.05 78 / 0));
+  animation: breathe 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(0.72); }
+  50%      { transform: scale(1.18); }
+}
+.bg-timer {
+  position: relative;
+  font-family: var(--serif);
+  font-size: 2.9rem;
+  font-weight: 400;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.breath-label {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-height: 1.4em;
+  margin-bottom: var(--space-lg);
+  transition: opacity 0.9s ease;
+}
+
+.escape-list { margin: 0 0 var(--space-md) 22px; }
 .escape-list li { margin-bottom: var(--space-sm); }
+
+/* --- urge defeated halo --- */
+
+.halo {
+  position: fixed;
+  top: 18vh; left: 50%;
+  width: 70vmin; height: 70vmin;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.78 0.11 78 / 0.16), transparent 65%);
+  pointer-events: none;
+  animation: halo-bloom 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes halo-bloom {
+  from { opacity: 0; transform: translateX(-50%) scale(0.5); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1); }
+}
 
 /* ---------- board ---------- */
 
@@ -365,5 +485,6 @@ details[open] { padding-bottom: var(--space-md); }
 #print-area .wallet ol { margin-left: 12pt; }
 
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * { transition: none !important; animation: none !important; }
+  .bg-step > * { opacity: 1; transform: none; }
 }
