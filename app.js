@@ -11,9 +11,9 @@ const STORE_KEY = "telos-v1";
 
 const DEFAULT_KEYSTONES = [
   { id: "faith",   label: "Bible + prayer" },
-  { id: "kitchen", label: "Kitchen closed after dinner" },
+  { id: "workout", label: "Workout" },
   { id: "phone",   label: "Phone out of the bedroom" },
-  { id: "move",    label: "Moved my body — independent of how I ate" },
+  { id: "read",    label: "Read a book" },
 ];
 
 const DEFAULT_LETTER =

@@ -113,12 +113,8 @@ body {
 
 /* ---------- slip chips ---------- */
 
-.slip-row {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
-}
-.slip-q { font-size: 0.95rem; color: var(--ink-soft); }
+.slip-block { margin-bottom: var(--space-md); }
+.slip-q { font-size: 0.95rem; color: var(--ink-soft); margin-bottom: var(--space-sm); }
 .chips { display: flex; gap: var(--space-sm); }
 .chips button {
   font-family: var(--sans);
