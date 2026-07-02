@@ -214,7 +214,17 @@ function startTimer(secs) {
   const el = document.getElementById("bg-timer");
   const ring = document.getElementById("ring-fill");
   const label = document.getElementById("breath-label");
-  const end = Date.now() + secs * 1000;
+
+  // Persist the end time so closing the app doesn't kill the wave —
+  // reopening resumes exactly where the clock actually is.
+  let end;
+  if (S.breakEnd && S.breakEnd > Date.now()) {
+    end = S.breakEnd;
+  } else {
+    end = Date.now() + secs * 1000;
+    S.breakEnd = end;
+    save();
+  }
 
   ring.style.strokeDashoffset = 0;
   const tick = () => {
@@ -224,6 +234,8 @@ function startTimer(secs) {
     ring.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - left / secs);
     if (left <= 0) {
       stopBreakTimers();
+      S.breakEnd = null;
+      save();
       el.textContent = "0:00";
       label.textContent = "The wave passed. You outlasted it.";
     }
@@ -250,8 +262,19 @@ function stopBreakTimers() {
   clearInterval(breathInterval);
 }
 
+function mirrorToIsland() {
+  // Opens a user-created Shortcuts shortcut that starts the native iOS
+  // timer — that one lives in the Dynamic Island / Lock Screen.
+  const mins = S.breakEnd
+    ? Math.max(1, Math.round((S.breakEnd - Date.now()) / 60000))
+    : 15;
+  location.href = "shortcuts://x-callback-url/run-shortcut?name=" +
+    encodeURIComponent("Telos Wave") + "&input=text&text=" + mins;
+}
+
 function urgeOutcome(outcome) {
   stopBreakTimers();
+  S.breakEnd = null;
   S.urges.push({ ts: Date.now(), outcome });
   save();
   document.querySelectorAll(".bg-step").forEach(s => s.classList.add("hidden"));
@@ -552,4 +575,21 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
 
-initToday();
+// Refresh the countdown after returning from the background —
+// iOS freezes intervals while the PWA is suspended.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" &&
+      !document.getElementById("bg-step-3").classList.contains("hidden") &&
+      S.breakEnd) {
+    startTimer(15 * 60);
+  }
+});
+
+if (S.breakEnd && S.breakEnd > Date.now()) {
+  // A wave was in progress when the app closed — drop straight back in.
+  startBreakGlass();
+  bgStep(3);
+} else {
+  if (S.breakEnd) { S.breakEnd = null; save(); }
+  initToday();
+}
