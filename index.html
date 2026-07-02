@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#191512">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Telos">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<title>Telos</title>
+</head>
+<body>
+
+<main id="app">
+
+  <!-- ============ TODAY ============ -->
+  <section id="view-today" class="view">
+    <header class="masthead">
+      <span class="wordmark">Telos</span>
+      <span class="anchor-chip" id="anchor-chip"></span>
+    </header>
+    <p class="identity-line" id="identity-line"></p>
+
+    <div id="recovery-banner" class="recovery-note hidden"></div>
+
+    <p class="verse"><span id="verse-text"></span> <cite id="verse-ref"></cite></p>
+
+    <h1 class="day-title" id="today-date"></h1>
+
+    <ul id="keystone-list" class="win-list"></ul>
+
+    <div class="slip-row">
+      <p class="slip-q">The pull today?</p>
+      <div class="chips" id="slip-seg">
+        <button data-slip="no">Quiet</button>
+        <button data-slip="showed">Surfed it</button>
+        <button data-slip="slipped">Slipped</button>
+      </div>
+    </div>
+
+    <div id="slip-answer" class="slip-row hidden">
+      <p class="slip-q">Answered with</p>
+      <div class="chips" id="voice-seg">
+        <button data-voice="compassion">Grace</button>
+        <button data-voice="contempt">Contempt</button>
+      </div>
+    </div>
+    <p class="voice-hint" id="voice-hint"></p>
+
+    <label class="note-field">
+      <span>One thing that went right</span>
+      <input type="text" id="win-note" placeholder="There's always one" autocomplete="off">
+    </label>
+
+    <p id="save-state" class="save-state"></p>
+  </section>
+
+  <!-- ============ BREAK GLASS ============ -->
+  <section id="view-break" class="view hidden">
+    <div id="bg-step-1" class="bg-step">
+      <h1 class="bg-title">Name it.</h1>
+      <p class="bg-text">A dopamine wave — and if a slip already happened, the pull to keep going is the <strong>what-the-hell effect</strong>. A known glitch, not the truth about you.</p>
+      <p class="bg-text">Waves crest and pass in about 15 minutes. Outlast one peak.</p>
+      <button class="primary-btn" onclick="bgStep(2)">Next</button>
+    </div>
+
+    <div id="bg-step-2" class="bg-step hidden">
+      <h1 class="bg-title">From calm Charlie.</h1>
+      <div class="letter" id="bg-letter"></div>
+      <button class="primary-btn" onclick="bgStep(3)">Start the 15 minutes</button>
+    </div>
+
+    <div id="bg-step-3" class="bg-step hidden">
+      <h1 class="bg-timer" id="bg-timer">15:00</h1>
+      <p class="bg-text">Pick one escape and go. The timer keeps running.</p>
+      <ul class="escape-list">
+        <li>16 oz of water, right now</li>
+        <li>10-minute walk out the front door</li>
+        <li>20 push-ups, then a shower</li>
+        <li>Pray it out loud — He already knows</li>
+      </ul>
+      <button class="primary-btn" onclick="urgeOutcome('surfed')">I outlasted it</button>
+      <button class="ghost-btn" onclick="urgeOutcome('slipped')">The slip happened</button>
+    </div>
+
+    <div id="bg-surfed" class="bg-step hidden">
+      <h1 class="bg-title accent">Urge defeated.</h1>
+      <p class="bg-text">Logged forever — <strong id="bg-urge-count"></strong> on the board. Every craving is a scoring opportunity now.</p>
+      <button class="primary-btn" onclick="showView('today')">Back to today</button>
+    </div>
+
+    <div id="bg-slipped" class="bg-step hidden">
+      <h1 class="bg-title">One thing is one thing.</h1>
+      <p class="bg-text">It doesn't have to become the next thing. That happened, it's human, and it is not a verdict on you. <em>"There is therefore now no condemnation…"</em> — Rom 8:1</p>
+      <p class="bg-text">The next choice is neutral. The workout still happens. The kitchen still closes. Nothing else falls with it.</p>
+      <p class="bg-text">You showed up to this screen mid-slip — that's the recovery muscle, and it counts.</p>
+      <button class="primary-btn" onclick="showView('today')">Next choice</button>
+    </div>
+  </section>
+
+  <!-- ============ BOARD ============ -->
+  <section id="view-stats" class="view hidden">
+    <header class="masthead"><span class="wordmark">Board</span></header>
+
+    <div class="scoreline">
+      <div><em id="stat-urges">0</em><span>urges defeated</span></div>
+      <div><em id="stat-recovery">–</em><span>recovery rate</span></div>
+      <div><em id="stat-days">0</em><span>days showed up</span></div>
+      <div><em id="stat-compassion">–</em><span>slips met with grace</span></div>
+    </div>
+    <p class="fineprint">Recovery rate = hard days turned around by the next day. It only goes up by coming back.</p>
+
+    <h2 class="month-label" id="cal-title"></h2>
+    <div id="calendar" class="calendar"></div>
+    <p class="fineprint"><i class="key g"></i> all wins &nbsp; <i class="key y"></i> some &nbsp; <i class="key r"></i> none &nbsp; <i class="key ring"></i> recovery day</p>
+  </section>
+
+  <!-- ============ MORE ============ -->
+  <section id="view-more" class="view hidden">
+    <header class="masthead"><span class="wordmark">More</span></header>
+
+    <details>
+      <summary>The vision</summary>
+      <p class="fineprint">Written when calm, delivered at the moment of craving.</p>
+      <label class="note-field"><span>Letter from calm Charlie</span>
+        <textarea id="vision-letter" rows="9"></textarea></label>
+      <label class="note-field"><span>Identity statement</span>
+        <textarea id="vision-identity" rows="3"></textarea></label>
+    </details>
+
+    <details>
+      <summary>Anchor date</summary>
+      <p class="fineprint">The race-date effect — an external commitment the daily work points at.</p>
+      <label class="note-field"><span>What</span>
+        <input type="text" id="anchor-label" placeholder="e.g. Marathon"></label>
+      <label class="note-field"><span>When</span>
+        <input type="date" id="anchor-date"></label>
+    </details>
+
+    <details>
+      <summary>Daily win boxes</summary>
+      <p class="fineprint">Few and durable. Loose and durable beats strict and brittle.</p>
+      <div id="keystone-editor"></div>
+    </details>
+
+    <details>
+      <summary>Sunday review</summary>
+      <label class="note-field"><span>Did the cycle show its head? What set it off?</span>
+        <textarea id="rev-1" rows="2"></textarea></label>
+      <label class="note-field"><span>Which environment tweak worked or needs adjusting?</span>
+        <textarea id="rev-2" rows="2"></textarea></label>
+      <label class="note-field"><span>Any rule creeping back toward strict &amp; brittle?</span>
+        <textarea id="rev-3" rows="2"></textarea></label>
+      <label class="note-field"><span>One sentence of grace toward yourself. Required.</span>
+        <textarea id="rev-4" rows="2"></textarea></label>
+      <button class="primary-btn" onclick="buildJacksonSummary()">Summary for Jackson</button>
+      <div id="jackson-out" class="letter hidden"></div>
+      <div class="row-btns hidden" id="jackson-actions">
+        <button class="ghost-btn" onclick="copyJackson()">Copy</button>
+        <button class="ghost-btn" onclick="shareJackson()">Share</button>
+      </div>
+    </details>
+
+    <details>
+      <summary>Print</summary>
+      <p class="fineprint">A wall chart screens can't compete with, and a wallet card for the way of escape.</p>
+      <button class="ghost-btn wide" onclick="printChart()">Monthly wall chart</button>
+      <button class="ghost-btn wide" onclick="printCard()">Wallet card</button>
+    </details>
+
+    <details>
+      <summary>Data</summary>
+      <div class="row-btns">
+        <button class="ghost-btn" onclick="exportData()">Export backup</button>
+        <button class="ghost-btn" onclick="document.getElementById('import-file').click()">Import</button>
+        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)">
+      </div>
+    </details>
+  </section>
+
+</main>
+
+<button id="break-glass-fab" onclick="startBreakGlass()">I'm being pulled</button>
+
+<nav id="tabbar">
+  <button data-view="today" class="active">Today</button>
+  <button data-view="stats">Board</button>
+  <button data-view="more">More</button>
+</nav>
+
+<div id="print-area" class="hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
